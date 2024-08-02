@@ -8,23 +8,33 @@ using System.CommandLine.Parsing;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using static HostingPlayground.HostingPlaygroundLogEvents;
+using System;
 
 namespace HostingPlayground;
 
 class Program
 {
-    static async Task Main(string[] args) => await BuildCommandLine()
-        .UseHost(_ => Host.CreateDefaultBuilder(),
-            host =>
-            {
-                host.ConfigureServices(services =>
-                {
-                    services.AddSingleton<IGreeter, Greeter>();
-                });
-            })
+    // for dependency injection container
+    private static Func<string[], IHostBuilder> hostbuilder = args => Host.CreateDefaultBuilder(args)
+        .UseDefaultServiceProvider((context, options) => { options.ValidateScopes = true; });
+
+    private static Action<IHostBuilder> ActionConfigureHost = host =>
+    {
+        host.ConfigureServices((context, services) =>
+        {
+            services.AddSingleton<IGreeter, Greeter>();
+        });
+    };
+
+    // command line
+    static async Task Main(string[] args)
+    {
+        await BuildCommandLine()
+        .UseHost(args => hostbuilder(args), ActionConfigureHost)
         .UseDefaults()
         .Build()
         .InvokeAsync(args);
+    }
 
     private static CommandLineBuilder BuildCommandLine()
     {
