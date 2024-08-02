@@ -1,9 +1,8 @@
 using System;
 
-namespace HostingPlayground
+namespace HostingPlayground;
+
+interface IGreeter
 {
-    interface IGreeter
-    {
-        void Greet(string name) => Console.WriteLine($"Hello, {name ?? "anonymous"}");
-    }
+    void Greet(string name) => Console.WriteLine($"Hello, {name ?? "anonymous"}");
 }

@@ -1,7 +1,6 @@
-namespace HostingPlayground
-{
-    public class Greeter : IGreeter
-    {
+namespace HostingPlayground;
 
-    }
+public class Greeter : IGreeter
+{
+
 }
