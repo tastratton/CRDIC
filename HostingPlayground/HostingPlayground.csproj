@@ -9,6 +9,9 @@
     <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.22272.1" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OldGreeter\OldGreeter.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
