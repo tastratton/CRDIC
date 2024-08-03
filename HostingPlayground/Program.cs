@@ -42,13 +42,18 @@ class Program
     };
 
     // command line
-    static async Task Main(string[] args)
+    static async Task<int> Main(string[] args)
     {
         await BuildCommandLine()
         .UseHost(args => GetHostBuilder(args), ActionConfigureServices)
         .UseDefaults()
         .Build()
         .InvokeAsync(args);
+        var commandLineParser = BuildCommandLine()
+            .UseHost(args => GetHostBuilder(args), ActionConfigureServices)
+            .UseDefaults()
+            .Build();
+        return await commandLineParser.InvokeAsync(args);
     }
 
     private static CommandLineBuilder BuildCommandLine()
