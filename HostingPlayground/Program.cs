@@ -10,16 +10,50 @@ using Microsoft.Extensions.DependencyInjection;
 using static HostingPlayground.HostingPlaygroundLogEvents;
 using System;
 using Microsoft.Extensions.Configuration;
+
 using System.IO;
 using HostingPlayground.CompositionRoot;
+using System.Collections.Immutable;
 
 namespace HostingPlayground;
 
 class Program
 {
-    // command line
     static async Task<int> Main(string[] args)
     {
+        // add config processing to main so we can get the config before the DI container actually exists...
+        // that way, we can configure it from config
+
+        // get DOTNET_ENVIRONMENT... environment variables and commandline only first
+        var configBuilder = new ConfigurationBuilder();
+        var configRoot = configBuilder
+            .AddEnvironmentVariables() //"DOTNET_"
+            .AddCommandLine(args)
+            .Build();
+        String EnvironmentName = configRoot["ENVIRONMENT"];
+        if (String.IsNullOrEmpty(EnvironmentName))
+        {
+            EnvironmentName = "Production";
+        };
+
+        foreach ((string key, string value) in configRoot.AsEnumerable().ToImmutableSortedDictionary())
+        {
+            Console.WriteLine($"'{key}' = '{value}'");
+        }
+
+        configRoot = configBuilder
+        .AddJsonFile(path: "appsettings.json", optional: false, reloadOnChange: false)
+        .AddJsonFile(path: $"appsettings.{EnvironmentName}.json", optional: true, reloadOnChange: false)
+        //.AddEnvironmentVariables()  // << if need ALL the env vars!
+        .AddEnvironmentVariables(prefix: "DOTNET_")  // just env vars starting with DOTNET_, strips the DOTNET_ from the result
+        .AddCommandLine(args)
+        .Build();
+
+        foreach ((string key, string value) in configRoot.AsEnumerable().ToImmutableSortedDictionary())
+        {
+            Console.WriteLine($"'{key}' = '{value}'");
+        }
+
         IHostBuilder hostBuilder = HostingPlayGroundCompositionRoot.GetHostBuilder(args);
         var commandLineParser = BuildCommandLine()
             .UseHost(args => hostBuilder, HostingPlayGroundCompositionRoot.ActionConfigureServices)
