@@ -48,7 +48,7 @@ class Program
             }
         };
         root.Handler = CommandHandler.Create<OldGreeter.GreeterOptions, IHost>(Run);
-        var sub1Command = new Command("test", "an example subcommand named test");
+        var sub1Command = new Command("dotest", "an example subcommand named dotest");
         root.AddCommand(sub1Command);
         
         return new CommandLineBuilder(root);
