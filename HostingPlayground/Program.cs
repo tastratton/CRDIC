@@ -31,7 +31,7 @@ class Program
     private static CommandLineBuilder BuildCommandLine()
     {
         var root = new RootCommand(@"$ dotnet run --name 'Joe'"){
-            new Option<string>("--name"){
+            new Option<string>(aliases: (["-n", "--name"]), description: "The name to add to the greeting" ){
                 IsRequired = true
             }
         };
