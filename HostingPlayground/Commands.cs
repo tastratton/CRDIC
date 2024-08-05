@@ -29,7 +29,7 @@ internal class Commands
     public static System.CommandLine.Parsing.Parser GetCommandLineParser(IHostBuilder hostBuilder, string[] args)
     {
         System.CommandLine.Parsing.Parser parser = Commands.BuildCommandLine()
-            .UseHost(args => hostBuilder, HostingPlayGroundCompositionRoot.ActionConfigureServices)
+            .UseHost(_ => hostBuilder, HostingPlayGroundCompositionRoot.ActionConfigureServices)
             .UseDefaults()
             .UseHelp(ctx =>
             {

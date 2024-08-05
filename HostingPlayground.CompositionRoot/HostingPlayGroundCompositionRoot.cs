@@ -33,6 +33,10 @@ public static class HostingPlayGroundCompositionRoot
             // end see TODO 1
             //hostConfig.AddEnvironmentVariables(prefix: ""); // prefix: "PREFIX_"); // DOTNET_ by default already added
             ;
+            IConfigurationRoot config = hostConfig.Build();
+            if (config["HostingPlayground:Logger"] == "EventLog") { Console.WriteLine ("detected eventlog logger in CompositionRoot GetHostBuilder hostConfig"); }
+            
+
         })
         .ConfigureAppConfiguration((hostContext, appConfig) =>
         {
@@ -41,25 +45,32 @@ public static class HostingPlayGroundCompositionRoot
             // see TODO 1
             appConfig.AddCommandLine(args);
             // end see TODO 1
+            IConfigurationRoot config = appConfig.Build();
+            if (config["HostingPlayground:Logger"] == "EventLog") { Console.WriteLine("detected eventlog logger in CompositionRoot GetHostBuilder appConfig "); }
+
         })
         ;
 
     };
 
+    /* -- not used?
     public static Action<IHostBuilder> ActionConfigureAppConfiguration = delegate (IHostBuilder builder)
     {
         builder.ConfigureServices((hostContext, services) =>
         {
+            Console.WriteLine("ActionConfigureAppConfiguration");
             IConfiguration configuration = hostContext.Configuration;
             services.AddSingleton<IGreeter, Greeter>();
         });
     };
+    */
 
 
     public static Action<IHostBuilder> ActionConfigureServices = delegate (IHostBuilder builder)
     {
         builder.ConfigureServices((context, services) =>
         {
+            Console.WriteLine("ActionConfigureServices");
             // moved to compositionroot
             //services.AddSingleton<IGreeter, Greeter>();
             services.AddServices();
