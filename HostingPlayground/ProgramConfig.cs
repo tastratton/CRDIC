@@ -23,11 +23,12 @@ internal class ProgramConfig
         {
             EnvironmentName = "Production";
         };
-
+        /* debug
         foreach ((string key, string value) in configRoot.AsEnumerable().ToImmutableSortedDictionary())
         {
             Console.WriteLine($"'{key}' = '{value}'");
         }
+        */
 
         configRoot = configBuilder
         .AddJsonFile(path: "appsettings.json", optional: false, reloadOnChange: false)
@@ -36,11 +37,12 @@ internal class ProgramConfig
         .AddEnvironmentVariables(prefix: "DOTNET_")  // just env vars starting with DOTNET_, strips the DOTNET_ from the result
         .AddCommandLine(args)
         .Build();
-
+        /* debug
         foreach ((string key, string value) in configRoot.AsEnumerable().ToImmutableSortedDictionary())
         {
             Console.WriteLine($"'{key}' = '{value}'");
         }
+        */
         return configRoot;
     }
 
