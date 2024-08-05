@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using static HostingPlayground.HostingPlaygroundLogEvents;
 using HostingPlayground.CompositionRoot;
 using Microsoft.Extensions.Configuration;
+using System.CommandLine.Help;
+using System.Linq;
 
 
 namespace HostingPlayground;
@@ -24,18 +26,31 @@ class Program
         var commandLineParser = BuildCommandLine()
             .UseHost(args => hostBuilder, HostingPlayGroundCompositionRoot.ActionConfigureServices)
             .UseDefaults()
+            .UseHelp(ctx =>
+                {
+                    ctx.HelpBuilder.CustomizeLayout(_ =>
+                        HelpBuilder.Default
+                        .GetLayout()
+                        .Append(_ => _.Output.WriteLine(""))
+                        .Append(_ => _.Output.WriteLine("Example:"))
+                        .Append(_ => _.Output.WriteLine("  $ HostingPlayground --name 'Joe'"))
+                        );               
+                })
             .Build();
         return await commandLineParser.InvokeAsync(args);
     }
 
     private static CommandLineBuilder BuildCommandLine()
     {
-        var root = new RootCommand(@"$ dotnet run --name 'Joe'"){
+        var root = new RootCommand(@"return a greeting"){
             new Option<string>(aliases: (["-n", "--name"]), description: "The name to add to the greeting" ){
                 IsRequired = true
             }
         };
         root.Handler = CommandHandler.Create<OldGreeter.GreeterOptions, IHost>(Run);
+        var sub1Command = new Command("test", "an example subcommand named test");
+        root.AddCommand(sub1Command);
+        
         return new CommandLineBuilder(root);
     }
 
